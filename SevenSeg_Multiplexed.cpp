@@ -1,3 +1,31 @@
+/*
+ * SSM_SimpleExample.cpp
+ * 
+ * by: Daniel Nebert
+ * 
+ * Creating a SSM object by passing an array of int representing
+ * the pin numbers connected to the displays select lines, the number
+ * of select lines used, the data direction register and PORT for
+ * the port connected to pins A through decimal point on the display.
+ * 
+ * refresh(int duration) needs to be called constantly.
+ * 
+ * To change the values viewed on the screen, call updateDisplay,
+ * and pass it a int array 'current' with bits set to create desired
+ * character. Binary value: 0b11111111 would mean all off and 0b00000000
+ * would mean all on.  If the bit is 1, the LED is off, else the LED is on.
+ * 
+ */
+
+/*
+	Changelog:
+	
+	20191022 - DN:
+		Added comments and moved things around to make it look better
+*/
+
+
+
 #include "Arduino.h"
 #include "SevenSeg_Multiplexed.h"
 
@@ -5,7 +33,10 @@ SevenSeg_Multiplexed::SevenSeg_Multiplexed(int* selPins, int c, volatile uint8_t
   // Capture array of pins and the count
   pins = selPins;
   count = c;
+  
+  // Set out data direction register as output
   *ddr = 0xFF;
+  // Capture PORT address, and set all bits to 1's
   segPort = port;
   *segPort = 0xFF;
 
@@ -14,20 +45,6 @@ SevenSeg_Multiplexed::SevenSeg_Multiplexed(int* selPins, int c, volatile uint8_t
     pinMode(pins[i], OUTPUT);
     digitalWrite(pins[i], LOW);
   }
-}
-int SevenSeg_Multiplexed::getSegCount() {
-  return count;
-}
-String SevenSeg_Multiplexed::toString() {
-  if(sizeof(pins) > 0) {
-    String output = String(pins[0]);
-    for(int i = 1; i < count; i++) {
-      output.concat(", ");
-      output.concat(String(pins[i]));
-    }
-    return output;
-  }
-  return "null";
 }
 void SevenSeg_Multiplexed::allSelectOn() {
   if(sizeof(pins) > 0) {
