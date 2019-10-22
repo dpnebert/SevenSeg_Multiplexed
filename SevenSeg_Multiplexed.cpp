@@ -62,9 +62,6 @@ void SevenSeg_Multiplexed::allSelectOff() {
 }
 void SevenSeg_Multiplexed::updateDisplay(volatile uint8_t *digits) {
   characters = digits;
-  for(int i = 0; i < count; i++) {
-    Serial.println(String(characters[i]));
-  }
 }
 void SevenSeg_Multiplexed::refresh(int pulseDuration) {
   for(int i = 0; i < count; i++) {
