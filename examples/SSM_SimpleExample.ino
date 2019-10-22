@@ -1,15 +1,34 @@
+/*
+ * SSM_SimpleExample
+ * 
+ * by: Daniel Nebert
+ * 
+ * Creating a SSM object by passing an array of int representing
+ * the pin numbers connected to the displays select lines, the number
+ * of select lines used, the data direction register and PORT for
+ * the port connected to pins A through decimal point on the display.
+ * 
+ * refresh(int duration) needs to be called constantly.
+ * 
+ * To change the values viewed on the screen, call updateDisplay,
+ * and pass it a int array 'current' with bits set to create desired
+ * character. Binary value: 0b11111111 would mean all off and 0b00000000
+ * would mean all on.  If the bit is 1, the LED is off, else the LED is on.
+ * 
+ */
+
+
 #include <SevenSeg_Multiplexed.h>
 
-#define NUMBER_OF_SELECT_PINS 4
-#define SELECT_PIN_1 50
-#define SELECT_PIN_2 51
-#define SELECT_PIN_3 52
-#define SELECT_PIN_4 53
+#define NUMBER_OF_SELECT_PINS   4
+#define SELECT_PIN_1            50
+#define SELECT_PIN_2            51
+#define SELECT_PIN_3            52
+#define SELECT_PIN_4            53
+#define COUNT_LIMIT             50
+#define DDR                     DDRC
+#define PORT                    PORTC
 
-#define COUNT_LIMIT 50
-
-#define DDR   DDRC
-#define PORT  PORTC
 
                           //   D
                           //   pGFEDCBA
@@ -42,16 +61,15 @@ int selectPins[NUMBER_OF_SELECT_PINS] = { SELECT_PIN_1, SELECT_PIN_2, SELECT_PIN
 
 SevenSeg_Multiplexed ssm = SevenSeg_Multiplexed(selectPins, NUMBER_OF_SELECT_PINS, &DDR, &PORT);
 
+int placekeeper = 0;
+int count_limit = 3000;
+
 void setup() {
   Serial.begin(9600);
   while(!Serial) {}
   debug("Serial comm. online");
-
-  // Initializing 
-
-  
+    
   debug("Select pins: ");
-  debug(ssm.toString());
 
   // Play display boot sequence
   debug("Starting boot sequence");
@@ -60,10 +78,15 @@ void setup() {
 
 }
 
-int placekeeper = 0;
-int count_limit = 3000;
 void loop() {
 
+  // Simply waits until it's counted up to COUNT_LIMIT
+  // before changin all four displays to the same character
+  //
+  // For demo purposes.  To make a timer, a internal interrupt
+  // should be used to trigger an increment.  Or just call
+  // updateDisplay when a value changes.  Just be sure to call
+  // refresh as often as possible to reduce flicker
   if(count_limit >= COUNT_LIMIT) {
     count_limit = 0;
     current[0] = characters[placekeeper];
@@ -75,11 +98,13 @@ void loop() {
     } else {
       placekeeper++;
     }
+
+    // Now we have new value to display, call updateDisplay
+    ssm.updateDisplay(current);
   }
   count_limit++;
 
-  // Pass new digits to ssm and refresh
-  ssm.updateDisplay(current);
+  // refresh
   ssm.refresh(3);  
 }
 
