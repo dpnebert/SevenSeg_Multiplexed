@@ -61,8 +61,6 @@ void setup() {
   while (!Serial) {}
   debug("Serial comm. online");
 
-  debug("Select pins: ");
-
   // Play display boot sequence
   debug("Starting boot sequence");
   ssm.playbootSeq();
