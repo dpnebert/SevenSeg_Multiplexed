@@ -71,11 +71,14 @@ void setup() {
   }
   ssm.updateDisplay(current);
 }
+String input;
 void loop() {
   if (Serial.available() > 0) {
     
     // Capturing the input from console
-    String input = Serial.readStringUntil('\n');
+    input = Serial.readStringUntil('\n');
+    Serial.print("Received: ");
+    Serial.println(input);
     char inputs[input.length()];
     input.toCharArray(inputs, input.length() + 1);
     int inputLength = sizeof(inputs);
