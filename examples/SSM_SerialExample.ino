@@ -53,9 +53,6 @@ int selectPins[NUMBER_OF_SELECT_PINS] = { SELECT_PIN_1, SELECT_PIN_2, SELECT_PIN
 
 SevenSeg_Multiplexed ssm = SevenSeg_Multiplexed(selectPins, NUMBER_OF_SELECT_PINS, &DDR, &PORT);
 
-int placekeeper = 0;
-int count_limit = 3000;
-
 void setup() {
   Serial.begin(9600);
   while (!Serial) {}
